@@ -30,6 +30,7 @@ CREATE TABLE judges(
   pk_judgeid SERIAL PRIMARY KEY,
   email VARCHAR,
   name VARCHAR,
+  password VARCHAR,
   created_at TIMESTAMP DEFAULT NOW()
 );
 CREATE TABLE judge_events(
