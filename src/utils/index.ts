@@ -7,31 +7,31 @@ interface SendMail {
     (to: string, event: string, text: string): void;
 }
 
-// export const sendMail: SendMail = async (to, event, text) => {
-//     const transporter = nodemailer.createTransport({
-//         service: 'gmail',
-//         auth: {
-//             user: process.env.MAIL_USERNAME,
-//             pass: process.env.MAIL_PASSWORD
-//         }
-//     });
+export const sendMail: SendMail = async (to, event, text) => {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASSWORD
+        }
+    });
 
 
-//     const mailOptions = {
-//         from: `"${event.toUpperCase}" ${process.env.MAIL_USERNAME}`,
-//         to: to,
-//         subject: `Welcome to ${event.toUpperCase}`,
-//         html: text
-//     };
+    const mailOptions = {
+        from: `"${event.toUpperCase}" ${process.env.MAIL_USERNAME}`,
+        to: to,
+        subject: `Welcome to ${event.toUpperCase}`,
+        html: text
+    };
 
-//     transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//             console.log("error", error)
-//         } else {
-//             console.log('Email sent: ' + info.response);
-//         }
-//     });
-// }
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log("error", error)
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
 
 
 export const generatePassword = async () => {

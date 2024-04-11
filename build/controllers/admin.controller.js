@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getScoreByTeamId = exports.getEventById = exports.getWinner = exports.getScoreByJudge = exports.getEventJudge = exports.addJudge = exports.getEventTeams = exports.addTeam = exports.addEvent = exports.getAllEvents = exports.login = void 0;
 const connection_1 = require("../database/models/connection");
 const utils_1 = require("../utils");
+const utils_2 = require("../utils");
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password } = req.body;
     try {
@@ -104,48 +105,50 @@ const addJudge = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield connection_1.client.query('INSERT INTO judges (email,name,password) VALUES ($1, $2, $3) RETURNING *', [email, name, password]);
         const judgeId = (_c = response === null || response === void 0 ? void 0 : response.rows[0]) === null || _c === void 0 ? void 0 : _c.pk_judgeid;
         yield connection_1.client.query("INSERT INTO judge_events (fk_eventid, fk_judgeid) VALUES ($1, $2)", [event_id, judgeId]);
-        //         sendMail(response.rows[0].email, "credenz", `
-        //         <!DOCTYPE html>
-        // <html lang="en">
-        // <head>
-        //     <meta charset="UTF-8">
-        //     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        //     <title>Welcome to Credenz</title>
-        //     <style>
-        //         body {
-        //             font-family: Arial, sans-serif;
-        //             margin: 20px;
-        //             padding: 0;
-        //             color: #333;
-        //         }
-        //         .container {
-        //             max-width: 600px;
-        //             margin: auto;
-        //             background: #f4f4f4;
-        //             padding: 20px;
-        //             border-radius: 8px;
-        //         }
-        //         .footer {
-        //             margin-top: 20px;
-        //             font-size: 0.8em;
-        //             text-align: center;
-        //         }
-        //     </style>
-        // </head>
-        // <body>
-        //     <div class="container">
-        //         <h2>Welcome to Credenz!</h2>
-        //         <p>Please use these credentials to login through our portal,</p>
-        //         <p><strong>Email:</strong> <span id="email">${response.rows[0].email}</span></p>
-        //         <p><strong>Password:</strong> <span id="password">${password}</span></p>
-        //         <div class="footer">
-        //             Regards,<br>
-        //             Credenz Team
-        //         </div>
-        //     </div>
-        // </body>
-        // </html>
-        //         `)
+        (0, utils_2.sendMail)(response.rows[0].email, "credenz", `
+                <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Welcome to Credenz</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 20px;
+                    padding: 0;
+                    color: #333;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: auto;
+                    background: #f4f4f4;
+                    padding: 20px;
+                    border-radius: 8px;
+                }
+                .footer {
+                    margin-top: 20px;
+                    font-size: 0.8em;
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Welcome to Credenz!</h2>
+                <p>Please use these credentials to login through our portal,</p>
+
+                <p><strong>Email:</strong> <span id="email">${response.rows[0].email}</span></p>
+                <p><strong>Password:</strong> <span id="password">${password}</span></p>
+
+                <div class="footer">
+                    Regards,<br>
+                    Credenz Team
+                </div>
+            </div>
+        </body>
+        </html>
+                `);
         res.status(201).json(response.rows[0]);
     }
     catch (error) {

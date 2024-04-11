@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { client } from "../database/models/connection";
 import { EventType } from '../types'
 import { generatePassword } from "../utils";
-// import { sendMail } from "../utils"
+import { sendMail } from "../utils"
 interface ApiRequest {
     (req: Request, res: Response): void;
 }
@@ -99,51 +99,50 @@ export const addJudge: ApiRequest = async (req, res) => {
 
         const judgeId = response?.rows[0]?.pk_judgeid;
         await client.query("INSERT INTO judge_events (fk_eventid, fk_judgeid) VALUES ($1, $2)", [event_id, judgeId]);
-        //         sendMail(response.rows[0].email, "credenz", `
-        //         <!DOCTYPE html>
-        // <html lang="en">
-        // <head>
-        //     <meta charset="UTF-8">
-        //     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        //     <title>Welcome to Credenz</title>
-        //     <style>
-        //         body {
-        //             font-family: Arial, sans-serif;
-        //             margin: 20px;
-        //             padding: 0;
-        //             color: #333;
-        //         }
-        //         .container {
-        //             max-width: 600px;
-        //             margin: auto;
-        //             background: #f4f4f4;
-        //             padding: 20px;
-        //             border-radius: 8px;
-        //         }
-        //         .footer {
-        //             margin-top: 20px;
-        //             font-size: 0.8em;
-        //             text-align: center;
-        //         }
-        //     </style>
-        // </head>
-        // <body>
-        //     <div class="container">
-        //         <h2>Welcome to Credenz!</h2>
-        //         <p>Please use these credentials to login through our portal,</p>
+        sendMail(response.rows[0].email, "credenz", `
+                <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Welcome to Credenz</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 20px;
+                    padding: 0;
+                    color: #333;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: auto;
+                    background: #f4f4f4;
+                    padding: 20px;
+                    border-radius: 8px;
+                }
+                .footer {
+                    margin-top: 20px;
+                    font-size: 0.8em;
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Welcome to Credenz!</h2>
+                <p>Please use these credentials to login through our portal,</p>
 
-        //         <p><strong>Email:</strong> <span id="email">${response.rows[0].email}</span></p>
-        //         <p><strong>Password:</strong> <span id="password">${password}</span></p>
+                <p><strong>Email:</strong> <span id="email">${response.rows[0].email}</span></p>
+                <p><strong>Password:</strong> <span id="password">${password}</span></p>
 
-        //         <div class="footer">
-        //             Regards,<br>
-        //             Credenz Team
-        //         </div>
-        //     </div>
-        // </body>
-        // </html>
-
-        //         `)
+                <div class="footer">
+                    Regards,<br>
+                    Credenz Team
+                </div>
+            </div>
+        </body>
+        </html>
+                `)
         res.status(201).json(response.rows[0]);
     } catch (error) {
         console.log(error)
