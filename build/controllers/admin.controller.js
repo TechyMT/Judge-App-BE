@@ -89,7 +89,7 @@ const getEventTeams = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(400).json({
                 message: "No teams for this event"
             });
-        res.status(200).json(response);
+        res.status(200).json(response.rows);
     }
     catch (error) {
         console.log(error);

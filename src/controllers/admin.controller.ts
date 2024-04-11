@@ -83,7 +83,7 @@ export const getEventTeams: ApiRequest = async (req, res) => {
         if (!response.rowCount) res.status(400).json({
             message: "No teams for this event"
         })
-        res.status(200).json(response);
+        res.status(200).json(response.rows);
     } catch (error) {
         console.log(error);
         res.status(500).send(error)

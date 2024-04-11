@@ -23,7 +23,7 @@ CREATE TABLE user_events (
   pk_id SERIAL PRIMARY KEY,
   fk_teamid INTEGER,
   fk_eventid INTEGER,
-  FOREIGN KEY (fk_eventid) REFERENCES events (pk_eventId),
+  FOREIGN KEY (fk_eventid) REFERENCES events (pk_eventId) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (fk_teamid) REFERENCES teams (pk_teamid)
 );
 CREATE TABLE judges(
@@ -38,7 +38,8 @@ CREATE TABLE judge_events(
   fk_judgeid INTEGER,
   fk_eventid INTEGER,
   FOREIGN KEY (fk_eventid) REFERENCES events (pk_eventId),
-  FOREIGN KEY (fk_judgeid) REFERENCES judges (pk_judgeid)
+  FOREIGN KEY (fk_judgeid) REFERENCES judges (pk_judgeid),
+  
 );
 CREATE TABLE judge_scores(
   pk_id SERIAL PRIMARY KEY,
