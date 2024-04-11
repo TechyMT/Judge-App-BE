@@ -12,6 +12,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.addScore = exports.getEvents = exports.login = void 0;
 const connection_1 = require("../database/models/connection");
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    try {
+        const judgePassword = yield connection_1.client.query("SELECT * from judges WHERE judges.email = $1", [email]);
+        if (!judgePassword.rowCount)
+            return res.status(400).json({
+                message: "No judge found with this email"
+            });
+        if (judgePassword.rows[0].password === password) {
+            return res.status(200).json({
+                message: "Login Successful"
+            });
+        }
+        return res.status(400).json({
+            message: "Invalid Credentials"
+        });
+    }
+    catch (error) {
+        console.log(error),
+            res.status(500).send(error);
+    }
 });
 exports.login = login;
 const getEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

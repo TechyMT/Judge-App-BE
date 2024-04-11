@@ -10,15 +10,16 @@ interface ApiRequest {
 export const login: ApiRequest = async (req, res) => {
     const { name, email, password } = req.body;
     try {
-        const judgePassword = await client.query("SELECT password from judges WHERE judges.email = $1", [email]);
-        if (judgePassword.rows == password) {
-            return res.status(200).json({
-                message: "Login Successful"
+        if (email === "adminemail69@gmail.com" && password === "golu69") {
+            res.status(200).json({
+                message: "Login Success"
             })
         }
-        res.status(400).json({
-            message: "Invalid Credentials"
-        })
+        else {
+            res.status(400).json({
+                message: "Invalid Creds"
+            })
+        }
     } catch (error) {
         console.log(error),
             res.status(500).send(error)
