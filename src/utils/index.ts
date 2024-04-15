@@ -7,7 +7,7 @@ interface SendMail {
     (to: string, event: string, text: string): void;
 }
 
-export const sendMail: SendMail = async (to, event, text) => {
+export const sendMail: SendMail = async (to, event = "Credenz", text) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {

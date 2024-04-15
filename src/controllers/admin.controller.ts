@@ -8,7 +8,10 @@ interface ApiRequest {
 }
 
 export const login: ApiRequest = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({
+        message: "Please provide email and password"
+    });
     try {
         if (email === "adminemail69@gmail.com" && password === "golu69") {
             res.status(200).json({
@@ -224,6 +227,7 @@ export const getWinner: ApiRequest = async (req, res) => {
         e.created_at AS event_created_at,
         t.pk_teamid AS team_id,
         t.email AS team_email,
+        t.leader_name,
         t.name AS team_name,
         SUM(js.score) AS scores
     FROM 
