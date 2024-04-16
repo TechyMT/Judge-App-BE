@@ -50,16 +50,6 @@ const startServer = async () => {
     }
 };
 
-cron.schedule("*/5 * * * *", () => {
-    console.log("Sending scheduled request at", new Date().toLocaleDateString(), "at", `${new Date().getHours()}:${new Date().getMinutes()}`);
-    request('https://hack-o-rama.onrender.com/ping', function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log("im okay");
-            // console.log(body) // Optionally, log the response body
-        }
-    });
-});
-
 startServer();
 
 
