@@ -19,6 +19,8 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const admin_routes_1 = require("./routes/admin.routes");
 const judge_routes_1 = require("./routes/judge.routes");
+const node_cron_1 = __importDefault(require("node-cron"));
+const request_1 = __importDefault(require("request"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
@@ -51,6 +53,15 @@ const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         console.error('Error starting server:', error);
     }
+});
+node_cron_1.default.schedule("*/5 * * * *", () => {
+    console.log("Sending scheduled request at", new Date().toLocaleDateString(), "at", `${new Date().getHours()}:${new Date().getMinutes()}`);
+    (0, request_1.default)('https://hack-o-rama.onrender.com/ping', function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log("im okay");
+            // console.log(body) // Optionally, log the response body
+        }
+    });
 });
 startServer();
 exports.default = server;
