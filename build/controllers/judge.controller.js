@@ -49,6 +49,11 @@ exports.getEvents = getEvents;
 const addScore = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { judge_id, event_id, team_id, scores } = req.body;
     try {
+        const response = (yield connection_1.client.query("SELECT * FROM judge_scores js WHERE fk_teamid = $1", [team_id])).rowCount;
+        if (response)
+            return res.status(401).json({
+                message: "Jugdge Already Scored this team"
+            });
         for (const score of scores) {
             const param_id = score.param_id;
             const marks = score.marks;

@@ -229,29 +229,31 @@ export const getWinner: ApiRequest = async (req, res) => {
         t.email AS team_email,
         t.leader_name,
         t.name AS team_name,
-        AVG(js.score) AS average_score
+        AVG(team_scores.sum_score) AS average_score
     FROM 
-        judge_scores js
+        (SELECT 
+            js.fk_eventid,
+            js.fk_teamid,
+            SUM(js.score) AS sum_score
+         FROM 
+            judge_scores js
+         GROUP BY 
+            js.fk_eventid, js.fk_teamid, js.fk_judgeid
+        ) AS team_scores
     INNER JOIN 
-        events e ON js.fk_eventid = e.pk_eventId
+        events e ON team_scores.fk_eventid = e.pk_eventId
     INNER JOIN 
-        teams t ON js.fk_teamid = t.pk_teamid
-    INNER JOIN 
-        event_parameters p ON js.fk_paramid = p.pk_paramid
-    INNER JOIN 
-        judges j ON js.fk_judgeid = j.pk_judgeid
+        teams t ON team_scores.fk_teamid = t.pk_teamid
     WHERE 
-        js.fk_eventid = $1
+        e.pk_eventId = $1
     GROUP BY 
         e.pk_eventId, t.pk_teamid
     ORDER BY
-        average_score DESC;    
-    `, [id]))
+        average_score DESC;`, [id]))
         if (!response.rowCount) return res.status(400).json({
             message: "No Scores for this event yet"
         })
         res.status(200).json(response.rows)
-
     } catch (error) {
         console.log(error);
         res.status(500).send(error)
@@ -282,9 +284,8 @@ export const getEventById: ApiRequest = async (req, res) => {
             message: "No Event Found"
         });
         const users = (await client.query(`
-        SELCT * FROM user_events ue INNER JOIN teams t ON t.pk_teamid = ue.fk_teamid WHERE ue.fk_teamid = $1
-        `,
-            [id]
+        SELECT * FROM user_events ue INNER JOIN teams t ON t.pk_teamid = ue.fk_teamid WHERE ue.fk_eventid = $1
+        `, [id]
         )).rows
         const data = response.rows;
         res.status(200).json({
