@@ -102,7 +102,9 @@ export const addJudge: ApiRequest = async (req, res) => {
 
         const judgeId = response?.rows[0]?.pk_judgeid;
         await client.query("INSERT INTO judge_events (fk_eventid, fk_judgeid) VALUES ($1, $2)", [event_id, judgeId]);
-        sendMail(response.rows[0].email, "credenz", `
+
+        const event_name = (await client.query("SELECT events.name FROM events WHERE events.pk_eventid = $1", [event_id])).rows[0];
+        sendMail(response.rows[0].email, event_name.name, `
                 <!DOCTYPE html>
         <html lang="en">
         <head>

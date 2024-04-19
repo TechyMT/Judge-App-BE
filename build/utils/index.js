@@ -16,7 +16,7 @@ exports.generatePassword = exports.sendMail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const sendMail = (to, event = "Credenz", text) => __awaiter(void 0, void 0, void 0, function* () {
+const sendMail = (to, event, text) => __awaiter(void 0, void 0, void 0, function* () {
     const transporter = nodemailer_1.default.createTransport({
         service: 'gmail',
         auth: {
@@ -27,7 +27,7 @@ const sendMail = (to, event = "Credenz", text) => __awaiter(void 0, void 0, void
     const mailOptions = {
         from: `"${event.toUpperCase}" ${process.env.MAIL_USERNAME}`,
         to: to,
-        subject: `Welcome to ${event.toUpperCase}`,
+        subject: `Welcome to ${event.toUpperCase()}`,
         html: text
     };
     transporter.sendMail(mailOptions, (error, info) => {

@@ -7,7 +7,7 @@ interface SendMail {
     (to: string, event: string, text: string): void;
 }
 
-export const sendMail: SendMail = async (to, event = "Credenz", text) => {
+export const sendMail: SendMail = async (to, event, text) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -20,7 +20,7 @@ export const sendMail: SendMail = async (to, event = "Credenz", text) => {
     const mailOptions = {
         from: `"${event.toUpperCase}" ${process.env.MAIL_USERNAME}`,
         to: to,
-        subject: `Welcome to ${event.toUpperCase}`,
+        subject: `Welcome to ${event.toUpperCase()}`,
         html: text
     };
 

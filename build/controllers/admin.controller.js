@@ -109,7 +109,8 @@ const addJudge = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield connection_1.client.query('INSERT INTO judges (email,name,password) VALUES ($1, $2, $3) RETURNING *', [email, name, password]);
         const judgeId = (_c = response === null || response === void 0 ? void 0 : response.rows[0]) === null || _c === void 0 ? void 0 : _c.pk_judgeid;
         yield connection_1.client.query("INSERT INTO judge_events (fk_eventid, fk_judgeid) VALUES ($1, $2)", [event_id, judgeId]);
-        (0, utils_2.sendMail)(response.rows[0].email, "credenz", `
+        const event_name = (yield connection_1.client.query("SELECT events.name FROM events WHERE events.pk_eventid = $1", [event_id])).rows[0];
+        (0, utils_2.sendMail)(response.rows[0].email, event_name.name, `
                 <!DOCTYPE html>
         <html lang="en">
         <head>
