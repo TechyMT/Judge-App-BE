@@ -239,7 +239,7 @@ const getWinner = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         t.email AS team_email,
         t.leader_name,
         t.name AS team_name,
-        SUM(js.score) AS scores
+        AVG(js.score) AS average_score
     FROM 
         judge_scores js
     INNER JOIN 
@@ -253,9 +253,9 @@ const getWinner = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     WHERE 
         js.fk_eventid = $1
     GROUP BY 
-        e.pk_eventId, t.pk_teamid, j.pk_judgeid
+        e.pk_eventId, t.pk_teamid
     ORDER BY
-        scores desc;
+        average_score DESC;    
     `, [id]));
         if (!response.rowCount)
             return res.status(400).json({
@@ -292,7 +292,13 @@ const getEventById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             return res.status(400).json({
                 message: "No Event Found"
             });
-        res.status(200).json(response.rows);
+        const users = (yield connection_1.client.query(`
+        SELCT * FROM user_events ue INNER JOIN teams t ON t.pk_teamid = ue.fk_teamid WHERE ue.fk_teamid = $1
+        `, [id])).rows;
+        const data = response.rows;
+        res.status(200).json({
+            data, users
+        });
     }
     catch (error) {
         console.log(error);
