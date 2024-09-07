@@ -1,23 +1,33 @@
-import { Pool } from 'pg';
-import dotenv from 'dotenv';
+// connection.ts
+import { Pool, PoolConfig } from "pg";
+import * as dotenv from "dotenv";
+
 dotenv.config();
 
-export const client = new Pool({
-    connectionString: process.env.POSTGRES_URL
+
+
+// Ensure all required environment variables are defined
+const requiredEnvVars = ['POSTGRES_USER', 'POSTGRES_PASSWORD', 'POSTGRES_DATABASE', 'POSTGRES_URL'];
+requiredEnvVars.forEach(envVar => {
+    if (!process.env[envVar]) {
+        console.error(`Missing required environment variable: ${envVar}`);
+        process.exit(1);
+    }
 });
 
-async function connectToDatabase() {
-    try {
-        await client.connect();
-        console.log('Connected to the database');
+const poolConfig: PoolConfig = {
+    connectionString: process.env.POSTGRES_URL,
+    idleTimeoutMillis: 30000,
+    ssl: {
+        rejectUnauthorized: false
+    },
+    min: 0,
+};
 
-        // Perform database operations here
+export const client = new Pool(poolConfig);
 
-    } catch (error) {
-        console.error('Error connecting to the database:', error);
-    }
-}
+client.connect()
+    .then(() => console.log('Connected to PostgreSQL database'))
+    .catch((err) => console.error('Error connecting to PostgreSQL database', err));
 
-connectToDatabase();
-
-
+export default client;
